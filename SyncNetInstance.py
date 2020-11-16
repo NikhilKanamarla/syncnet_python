@@ -37,7 +37,7 @@ class SyncNetInstance(torch.nn.Module):
     def __init__(self, dropout = 0, num_layers_in_fc_layers = 1024):
         super(SyncNetInstance, self).__init__();
 
-        self.__S__ = S(num_layers_in_fc_layers = num_layers_in_fc_layers).cuda();
+        self.__S__ = S(num_layers_in_fc_layers = num_layers_in_fc_layers).cpu();
 
     def evaluate(self, opt, videofile):
 
@@ -51,10 +51,10 @@ class SyncNetInstance(torch.nn.Module):
           rmtree(os.path.join(opt.tmp_dir,opt.reference))
 
         os.makedirs(os.path.join(opt.tmp_dir,opt.reference))
-
+        #video
         command = ("ffmpeg -y -i %s -threads 1 -f image2 %s" % (videofile,os.path.join(opt.tmp_dir,opt.reference,'%06d.jpg'))) 
         output = subprocess.call(command, shell=True, stdout=None)
-
+        #audio
         command = ("ffmpeg -y -i %s -async 1 -ac 1 -vn -acodec pcm_s16le -ar 16000 %s" % (videofile,os.path.join(opt.tmp_dir,opt.reference,'audio.wav'))) 
         output = subprocess.call(command, shell=True, stdout=None)
         
@@ -83,7 +83,7 @@ class SyncNetInstance(torch.nn.Module):
         sample_rate, audio = wavfile.read(os.path.join(opt.tmp_dir,opt.reference,'audio.wav'))
         mfcc = zip(*python_speech_features.mfcc(audio,sample_rate))
         mfcc = numpy.stack([numpy.array(i) for i in mfcc])
-
+        #extract heatmap of sound
         cc = numpy.expand_dims(numpy.expand_dims(mfcc,axis=0),axis=0)
         cct = torch.autograd.Variable(torch.from_numpy(cc.astype(float)).float())
 
@@ -97,7 +97,7 @@ class SyncNetInstance(torch.nn.Module):
         min_length = min(len(images),math.floor(len(audio)/640))
         
         # ========== ==========
-        # Generate video and audio feats
+        # Generate video and audio features
         # ========== ==========
 
         lastframe = min_length-5
@@ -109,29 +109,35 @@ class SyncNetInstance(torch.nn.Module):
             
             im_batch = [ imtv[:,:,vframe:vframe+5,:,:] for vframe in range(i,min(lastframe,i+opt.batch_size)) ]
             im_in = torch.cat(im_batch,0)
-            im_out  = self.__S__.forward_lip(im_in.cuda());
+            im_out  = self.__S__.forward_lip(im_in.cpu());
             im_feat.append(im_out.data.cpu())
 
             cc_batch = [ cct[:,:,:,vframe*4:vframe*4+20] for vframe in range(i,min(lastframe,i+opt.batch_size)) ]
             cc_in = torch.cat(cc_batch,0)
-            cc_out  = self.__S__.forward_aud(cc_in.cuda())
+            cc_out  = self.__S__.forward_aud(cc_in.cpu())
             cc_feat.append(cc_out.data.cpu())
 
+        #save feature some how? It's a PyTorch Tensor
         im_feat = torch.cat(im_feat,0)
+        torch.save(im_feat, 'videoFeatures.pt')
         cc_feat = torch.cat(cc_feat,0)
+        torch.save(cc_feat, 'audioFeatures.pt')
 
         # ========== ==========
         # Compute offset
         # ========== ==========
             
         print('Compute time %.3f sec.' % (time.time()-tS))
-
+        #gets pairwise distances between video and audio
         dists = calc_pdist(im_feat,cc_feat,vshift=opt.vshift)
+        #finds the mean distance 
         mdist = torch.mean(torch.stack(dists,1),1)
-
+        print("mean distance ", mdist)
+        #finds the min distance
         minval, minidx = torch.min(mdist,0)
-
+        #unclear
         offset = opt.vshift-minidx
+        #confidence is median distance - min distance
         conf   = torch.median(mdist) - minval
 
         fdist   = numpy.stack([dist[minidx].numpy() for dist in dists])
@@ -184,7 +190,7 @@ class SyncNetInstance(torch.nn.Module):
             
             im_batch = [ imtv[:,:,vframe:vframe+5,:,:] for vframe in range(i,min(lastframe,i+opt.batch_size)) ]
             im_in = torch.cat(im_batch,0)
-            im_out  = self.__S__.forward_lipfeat(im_in.cuda());
+            im_out  = self.__S__.forward_lipfeat(im_in.cpu());
             im_feat.append(im_out.data.cpu())
 
         im_feat = torch.cat(im_feat,0)
