@@ -73,6 +73,7 @@ def track_shot(opt,scenefaces):
     for framefaces in scenefaces:
       for face in framefaces:
         if track == []:
+          #add to tracking     
           track.append(face)
           framefaces.remove(face)
         elif face['frame'] - track[-1]['frame'] <= opt.num_failed_det:
@@ -114,6 +115,7 @@ def crop_video(opt,track,cropfile):
   flist.sort()
 
   fourcc = cv2.VideoWriter_fourcc(*'XVID')
+  #ensures the model can take the input frames by cropping to the mouth region
   vOut = cv2.VideoWriter(cropfile+'t.avi', fourcc, opt.frame_rate, (224,224))
 
   dets = {'x':[], 'y':[], 's':[]}
