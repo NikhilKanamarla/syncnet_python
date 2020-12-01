@@ -119,9 +119,9 @@ class SyncNetInstance(torch.nn.Module):
 
         #save feature some how? It's a PyTorch Tensor
         im_feat = torch.cat(im_feat,0)
-        torch.save(im_feat, 'videoFeatures.pt')
+        torch.save(im_feat, 'features/videoFeatures.pt')
         cc_feat = torch.cat(cc_feat,0)
-        torch.save(cc_feat, 'audioFeatures.pt')
+        torch.save(cc_feat, 'features/audioFeatures.pt')
 
         # ========== ==========
         # Compute offset
@@ -132,7 +132,11 @@ class SyncNetInstance(torch.nn.Module):
         dists = calc_pdist(im_feat,cc_feat,vshift=opt.vshift)
         #finds the mean distance 
         mdist = torch.mean(torch.stack(dists,1),1)
-        print("mean distance ", mdist)
+        original_stdout = sys.stdout
+        with open("meanDistances.txt", 'w') as f:
+            sys.stdout = f
+            print("mean distance ", mdist)
+            sys.stdout = original_stdout
         #finds the min distance
         minval, minidx = torch.min(mdist,0)
         #unclear
