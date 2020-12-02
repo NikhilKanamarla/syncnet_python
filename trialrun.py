@@ -26,7 +26,6 @@ from run_pipeline import main
 def data_test():
     # Iterate through fake data directory and run through model
     directory = '/datab/nkanama/facebookDataset/trialRun/data'
-    output_directory = '/datab/nkanama/facebookDataset/trailRun/model_output'
     videofile = ' '
     reference = ' '
     num = 0
@@ -45,7 +44,7 @@ def data_test():
         cropped_string = video.find('.')
         reference = video[0:cropped_string]
         # create argument parses
-        opt = get_args(output_directory, videofile, reference)
+        opt = get_args(directory, videofile, reference)
         # run through pipeline script to process videos
         main(opt)
         break
