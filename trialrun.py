@@ -32,7 +32,10 @@ def data_test():
     num = 0
     # iterating over videos
     for video in os.listdir(directory):
-        # iterates through every 10th viddeo
+        # iterates through every 10th video
+        #skips directories
+        if os.path.isdir(video):
+            continue
         num = num + 1
         if(num < 10):
             continue
@@ -70,11 +73,11 @@ def get_args(data_dir, videofile, reference):
                         default=100,  help='Minimum face size in pixels')
     opt = parser.parse_args()
 
-    setattr(opt,'avi_dir',os.path.join(opt.data_dir,'pyavi'))
-    setattr(opt,'tmp_dir',os.path.join(opt.data_dir,'pytmp'))
-    setattr(opt,'work_dir',os.path.join(opt.data_dir,'pywork'))
-    setattr(opt,'crop_dir',os.path.join(opt.data_dir,'pycrop'))
-    setattr(opt,'frames_dir',os.path.join(opt.data_dir,'pyframes'))
+    setattr(opt, 'avi_dir', os.path.join(opt.data_dir, opt.reference + 'pyavi'))
+    setattr(opt, 'tmp_dir', os.path.join(opt.data_dir, opt.reference + 'pytmp'))
+    setattr(opt, 'work_dir', os.path.join(opt.data_dir, opt.reference + 'pywork'))
+    setattr(opt, 'crop_dir', os.path.join(opt.data_dir, opt.reference + 'pycrop'))
+    setattr(opt,'frames_dir',os.path.join(opt.data_dir, opt.reference + 'pyframes'))
     return opt
 
 
