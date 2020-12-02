@@ -251,13 +251,10 @@ def scene_detect(opt):
 
   return scene_list
     
-def main():
+def main(opt):
   # ========== ========== ========== ==========
   # # EXECUTE DEMO
   # ========== ========== ========== ==========
-
-  # Get arguments 
-  opt = get_args()
 
   # ========== DELETE EXISTING DIRECTORIES ==========
 
@@ -329,4 +326,6 @@ def main():
 
 
 if __name__ == '__main__':
-      main()
+      # Get arguments
+      opt = get_args()
+      main(opt)
