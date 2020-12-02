@@ -25,7 +25,7 @@ from run_pipeline import main
 
 def data_test():
     # Iterate through fake data directory and run through model
-    directory = '/datab/nkanama/facebookDataset/trailRun/data'
+    directory = '/datab/nkanama/facebookDataset/trialRun/data'
     output_directory = '/datab/nkanama/facebookDataset/trailRun/model_output'
     videofile = ' '
     reference = ' '
