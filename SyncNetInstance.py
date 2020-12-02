@@ -130,22 +130,20 @@ class SyncNetInstance(torch.nn.Module):
         print('Compute time %.3f sec.' % (time.time()-tS))
         #gets pairwise distances between video and audio
         dists = calc_pdist(im_feat,cc_feat,vshift=opt.vshift)
-        '''
+        
         #finds the mean distance 
         mdist = torch.mean(torch.stack(dists,1),1)
-        original_stdout = sys.stdout
-        with open("meanDistances.txt", 'w') as f:
-            sys.stdout = f
-            print("mean distance ", mdist)
-            sys.stdout = original_stdout
-        '''
         #finds the min distance
         minval, minidx = torch.min(mdist,0)
         #unclear
         offset = opt.vshift-minidx
         #confidence is median distance - min distance
         conf   = torch.median(mdist) - minval
-
+        original_stdout = sys.stdout
+        with open("medianDistances.txt", 'w') as f:
+            sys.stdout = f
+            print("median distance is ", torch.median(mdist))
+            sys.stdout = original_stdout
         fdist   = numpy.stack([dist[minidx].numpy() for dist in dists])
         # fdist   = numpy.pad(fdist, (3,3), 'constant', constant_values=15)
         fconf   = torch.median(mdist).numpy() - fdist
