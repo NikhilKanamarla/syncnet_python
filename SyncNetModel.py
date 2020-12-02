@@ -3,7 +3,7 @@
 
 import torch
 import torch.nn as nn
-#use default PyTorch methods to load and s
+#use default PyTorch methods to load and save model
 def save(model, filename):
     with open(filename, "wb") as f:
         torch.save(model, f);
