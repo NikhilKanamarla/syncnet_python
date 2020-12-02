@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "/Users/nk/miniconda3/envs/research/bin/python"
+    "python.pythonPath": "/usr/bin/python3",
+    "git.ignoreLimitWarning": true
 }
