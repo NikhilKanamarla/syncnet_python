@@ -26,9 +26,11 @@ from run_pipeline import main
 def data_test():
     # Iterate through fake data directory and run through model
     directory = '/datab/nkanama/facebookDataset/trialRun/data'
+    output_directory = '/datab/nkanama/facebookDataset/trialRun/model_output'
     videofile = ' '
     reference = ' '
     num = 0
+    num_videos = 0
     # iterating over videos
     for video in os.listdir(directory):
         # iterates through every 10th video
@@ -39,12 +41,16 @@ def data_test():
         if(num < 10):
             continue
         else:
+            num_videos = num_videos+1
             num = 0
+        if(num_videos == 100):
+            break
+        
         videofile = os.path.join(directory,video)
         cropped_string = video.find('.')
         reference = video[0:cropped_string]
         # create argument parses
-        opt = get_args(directory, videofile, reference)
+        opt = get_args(output_directory, videofile, reference)
         # run through pipeline script to process videos
         main(opt)
         break
