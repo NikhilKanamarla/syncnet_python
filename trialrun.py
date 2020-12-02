@@ -40,7 +40,7 @@ def data_test():
             continue
         else:
             num = 0
-        videofile = video
+        videofile = os.path.join(directory,video)
         cropped_string = video.find('.')
         reference = video[0:cropped_string]
         # create argument parses
