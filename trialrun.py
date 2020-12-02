@@ -31,7 +31,7 @@ def data_test():
     reference = ' '
     num = 0
     # iterating over videos
-    for video in directory:
+    for video in os.listdir(directory):
         # iterates through every 10th viddeo
         num = num + 1
         if(num < 10):
