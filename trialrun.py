@@ -20,7 +20,8 @@ from scipy.interpolate import interp1d
 from scipy.io import wavfile
 from scipy import signal
 from detectors import S3FD
-from run_pipeline import main
+from run_pipeline import main as pipelineMain
+from run_syncnet import main as syncMain
 
 
 def data_test():
@@ -45,18 +46,21 @@ def data_test():
             num = 0
         if(num_videos == 100):
             break
-        
+
         videofile = os.path.join(directory,video)
         cropped_string = video.find('.')
         reference = video[0:cropped_string]
         # create argument parses
-        opt = get_args(output_directory, videofile, reference)
+        opt_pipeline = get_args_pipeline(output_directory, videofile, reference)
         # run through pipeline script to process videos
-        main(opt)
+        pipelineMain(opt_pipeline)
+        #run through syncnet script to process videos
+        opt_syncnet = get_args_syncnet(output_directory, videofile,reference)
+        syncMain(opt_syncnet)
         break
 
 
-def get_args(data_dir, videofile, reference):
+def get_args_pipeline(data_dir, videofile, reference):
     parser = argparse.ArgumentParser(description="FaceTracker")
     parser.add_argument('--data_dir',       type=str,
                         default=data_dir, help='Output directory')
@@ -83,6 +87,26 @@ def get_args(data_dir, videofile, reference):
     setattr(opt, 'work_dir', os.path.join(opt.data_dir, 'pywork'))
     setattr(opt, 'crop_dir', os.path.join(opt.data_dir, 'pycrop'))
     setattr(opt,'frames_dir',os.path.join(opt.data_dir, 'pyframes'))
+    return opt
+
+
+def get_args_syncnet(data_dir, videofile, reference):
+    # ==================== PARSE ARGUMENT ====================
+
+    parser = argparse.ArgumentParser(description="SyncNet")
+    parser.add_argument('--initial_model', type=str,
+                        default="data/syncnet_v2.model", help='')
+    parser.add_argument('--batch_size', type=int, default='20', help='')
+    parser.add_argument('--vshift', type=int, default='15', help='')
+    parser.add_argument('--data_dir', type=str, default=data_dir, help='')
+    parser.add_argument('--videofile', type=str, default=videofile, help='')
+    parser.add_argument('--reference', type=str, default=reference, help='')
+    opt = parser.parse_args()
+
+    setattr(opt, 'avi_dir', os.path.join(opt.data_dir, 'pyavi'))
+    setattr(opt, 'tmp_dir', os.path.join(opt.data_dir, 'pytmp'))
+    setattr(opt, 'work_dir', os.path.join(opt.data_dir, 'pywork'))
+    setattr(opt, 'crop_dir', os.path.join(opt.data_dir, 'pycrop'))
     return opt
 
 
