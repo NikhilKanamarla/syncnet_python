@@ -70,16 +70,11 @@ def get_args(data_dir, videofile, reference):
                         default=100,  help='Minimum face size in pixels')
     opt = parser.parse_args()
 
-    setattr(opt, 'avi_dir', os.path.join(
-        opt.data_dir, opt.videofile + 'pyavi'))
-    setattr(opt, 'tmp_dir', os.path.join(
-        opt.data_dir, opt.videofile + 'pytmp'))
-    setattr(opt, 'work_dir', os.path.join(
-        opt.data_dir, opt.videofile + 'pywork'))
-    setattr(opt, 'crop_dir', os.path.join(
-        opt.data_dir, opt.videofile + 'pycrop'))
-    setattr(opt, 'frames_dir', os.path.join(
-        opt.data_dir, opt.videofile + 'pyframes'))
+    setattr(opt,'avi_dir',os.path.join(opt.data_dir,'pyavi'))
+    setattr(opt,'tmp_dir',os.path.join(opt.data_dir,'pytmp'))
+    setattr(opt,'work_dir',os.path.join(opt.data_dir,'pywork'))
+    setattr(opt,'crop_dir',os.path.join(opt.data_dir,'pycrop'))
+    setattr(opt,'frames_dir',os.path.join(opt.data_dir,'pyframes'))
     return opt
 
 
