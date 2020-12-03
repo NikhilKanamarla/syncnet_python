@@ -22,7 +22,25 @@ from scipy import signal
 from detectors import S3FD
 from run_pipeline import main as pipelineMain
 from run_syncnet import main as syncMain
+import json
 
+
+def checkValid(name):
+    json_file_1 = "/datab/nkanama/facebookDataset/dfdc_train_part_0/metadata.json"
+    json_file_2 = "/datab/nkanama/facebookDataset/dfdc_train_part_0/metadata.json"
+    json_file_3 = "/datab/nkanama/facebookDataset/dfdc_train_part_0/metadata.json"
+    realOrFake = False
+    json_check_1 = open(json_file_1)
+    json_check_1X = json.loads(json_file_1)
+    json_check_2 = open(json_file_2)
+    json_check_2X = json.loads(json_file_2)
+    json_check_3 = open(json_file_3)
+    json_check_3X = json.loads(json_check_3)
+    for video in json_check_1X, json_check_2X, json_check_3X:
+        if(video.keys() == name and video.values()[0]['label'] == 'REAL'):
+            realOrFake = True
+    return realOrFake
+    
 
 def data_test():
     # Iterate through fake data directory and run through model
@@ -35,8 +53,8 @@ def data_test():
     # iterating over videos
     for video in os.listdir(directory):
         # iterates through every 10th video
-        #skips directories
-        if os.path.isdir(video):
+        #skips directories and fake video
+        if os.path.isdir(video) or checkValid(video):
             continue
         num = num + 1
         if(num < 10):
