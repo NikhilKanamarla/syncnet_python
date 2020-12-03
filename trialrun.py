@@ -37,7 +37,13 @@ def checkValid(name):
     json_check_2X = json.load(json_check_2)
     json_check_3 = open(json_file_3)
     json_check_3X = json.load(json_check_3)
-    for (key, values) in json_check_1X.items(), json_check_2X.items(), json_check_3X.items():
+    for (key, values) in json_check_1X.items():
+        if(key == name and values['label'] == 'FAKE'):
+            realOrFake = True
+    for (key, values) in json_check_2X.items():
+        if(key == name and values['label'] == 'FAKE'):
+            realOrFake = True
+    for (key, values) in json_check_3X.items():
         if(key == name and values['label'] == 'FAKE'):
             realOrFake = True
     json_check_1.close()
