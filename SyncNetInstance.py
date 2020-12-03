@@ -137,7 +137,8 @@ class SyncNetInstance(torch.nn.Module):
         #save feature some how? It's a PyTorch Tensor
         im_feat = torch.cat(im_feat, 0)
         path_features = os.path.join(opt.work_dir, "features", opt.reference)
-        os.makedirs(path_features)
+        if os.path.exists(path_features) == False: 
+            os.makedirs(path_features)
         torch.save(im_feat, os.path.join(path_features, 'videoFeatures.pt'))
         cc_feat = torch.cat(cc_feat, 0)
         torch.save(cc_feat, os.path.join(path_features,'audioFeatures.pt'))
