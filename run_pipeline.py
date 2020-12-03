@@ -211,7 +211,7 @@ def inference_video(opt):
 
     print('%s-%05d; %d dets; %.2f Hz' % (os.path.join(opt.avi_dir,opt.reference,'video.avi'),fidx,len(dets[-1]),(1/elapsed_time))) 
 
-  savepath = os.path.join(opt.work_dir,opt.reference, 'other', 'faces.pckl')
+  savepath = os.path.join(opt.work_dir,opt.reference, 'faces.pckl')
 
   with open(savepath, 'wb') as fil:
     pickle.dump(dets, fil)
