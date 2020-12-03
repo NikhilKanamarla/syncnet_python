@@ -42,8 +42,9 @@ def main(opt):
         dists.append(dist)
         
     # ==================== PRINT RESULTS TO FILE ====================
-
-    with open(os.path.join(opt.work_dir,opt.reference,'activesd.pckl'), 'wb') as fil:
+    if os.path.exists(os.path.join(opt.work_dir, opt.reference, "other")) == False:
+        os.makedirs(os.path.join(opt.work_dir, opt.reference, "other"))
+    with open(os.path.join(opt.work_dir, opt.reference, "other", 'activesd.pckl'), 'wb') as fil:
         pickle.dump(dists, fil)
 
 
