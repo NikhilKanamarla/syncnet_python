@@ -54,7 +54,7 @@ def data_test():
     for video in os.listdir(directory):
         # iterates through every 10th video
         #skips directories and fake video
-        if os.path.isdir(video) or checkValid(video):
+        if (os.path.isdir(video) or checkValid(video)):
             continue
         num = num + 1
         if(num < 10):
