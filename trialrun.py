@@ -37,16 +37,12 @@ def checkValid(name):
     json_check_2X = json.load(json_check_2)
     json_check_3 = open(json_file_3)
     json_check_3X = json.load(json_check_3)
-    for video in json_check_1X:
-        print(video)
-        if(video == name and video.values()[0]['label'] == 'FAKE'):
+    for (key, values) in json_check_1X.items(), json_check_2X.items(), json_check_3X.items():
+        if(key == name and values['label'] == 'FAKE'):
             realOrFake = True
-    for video in json_check_2X:
-        if(video == name and video.values()[0]['label'] == 'FAKE'):
-            realOrFake = True
-    for video in json_check_3X:
-        if(video  == name and video.values()[0]['label'] == 'FAKE'):
-            realOrFake = True
+    json_check_1.close()
+    json_check_2.close()
+    json_check_3.close()
     return realOrFake
 
 
