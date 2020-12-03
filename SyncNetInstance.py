@@ -119,9 +119,12 @@ class SyncNetInstance(torch.nn.Module):
 
         #save feature some how? It's a PyTorch Tensor
         im_feat = torch.cat(im_feat,0)
-        torch.save(im_feat, 'features/videoFeatures.pt')
+        path_features = os.path.join(opt.work_dir, "features", opt.reference)
+        if os.path.exists(path_features) == False:
+            os.makedirs(path_features)
+        torch.save(im_feat, os.path.join(path_features,'videoFeatures.pt'))
         cc_feat = torch.cat(cc_feat,0)
-        torch.save(cc_feat, 'features/audioFeatures.pt')
+        torch.save(cc_feat, os.path.join(path_features, 'audioFeatures.pt')
 
         # ========== ==========
         # Compute offset
@@ -139,11 +142,6 @@ class SyncNetInstance(torch.nn.Module):
         offset = opt.vshift-minidx
         #confidence is median distance - min distance
         conf   = torch.median(mdist) - minval
-        original_stdout = sys.stdout
-        with open("medianDistances.txt", 'w') as f:
-            sys.stdout = f
-            print("median distance is ", torch.median(mdist))
-            sys.stdout = original_stdout
         fdist   = numpy.stack([dist[minidx].numpy() for dist in dists])
         # fdist   = numpy.pad(fdist, (3,3), 'constant', constant_values=15)
         fconf   = torch.median(mdist).numpy() - fdist
@@ -155,6 +153,18 @@ class SyncNetInstance(torch.nn.Module):
         print('AV offset: \t%d \nMin dist: \t%.3f\nConfidence: \t%.3f' % (offset,minval,conf))
 
         dists_npy = numpy.array([ dist.numpy() for dist in dists ])
+        
+        path_stats = os.path.join(opt.work_dir, "stats", opt.reference)
+        if os.path.exists(path_stats) == False:
+            os.makedirs(path_stats)
+        original_stdout = sys.stdout
+        with open(os.path.join(path_stats, "medianDistances.txt"), 'w') as f:
+            sys.stdout = f
+            print("median distance is ", torch.median(mdist))
+            print("AV offset is ", offset)
+            print("Confidence is ", conf)
+            print("min distance is ", minval)
+            sys.stdout = original_stdout
         return offset.numpy(), conf.numpy(), dists_npy
 
     def extract_feature(self, opt, videofile):
