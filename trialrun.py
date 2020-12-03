@@ -8,6 +8,7 @@ import pickle
 import subprocess
 import glob
 import cv2
+import ast
 import numpy as np
 from shutil import rmtree
 import scenedetect
@@ -37,12 +38,15 @@ def checkValid(name):
     json_check_3 = open(json_file_3)
     json_check_3X = json.load(json_check_3)
     for video in json_check_1X:
+        video = ast.literal_eval(video)
         if(video.keys() == name and video.values()[0]['label'] == 'FAKE'):
             realOrFake = True
     for video in json_check_2X:
+        video = ast.literal_eval(video)
         if(video.keys() == name and video.values()[0]['label'] == 'FAKE'):
             realOrFake = True
     for video in json_check_3X:
+        video = ast.literal_eval(video)
         if(video.keys() == name and video.values()[0]['label'] == 'FAKE'):
             realOrFake = True
     return realOrFake
