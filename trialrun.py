@@ -31,9 +31,9 @@ def checkValid(name):
     json_file_3 = "/datab/nkanama/facebookDataset/dfdc_train_part_0/metadata.json"
     realOrFake = False
     json_check_1 = open(json_file_1)
-    json_check_1X = json.loads(json_file_1)
+    json_check_1X = json.loads(json_check_1)
     json_check_2 = open(json_file_2)
-    json_check_2X = json.loads(json_file_2)
+    json_check_2X = json.loads(json_check_2)
     json_check_3 = open(json_file_3)
     json_check_3X = json.loads(json_check_3)
     for video in json_check_1X, json_check_2X, json_check_3X:
