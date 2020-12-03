@@ -37,15 +37,18 @@ def checkValid(name):
     json_check_3 = open(json_file_3)
     json_check_3X = json.load(json_check_3)
     for video in json_check_1X, json_check_2X, json_check_3X:
-        if(video.keys() == name and video.values()[0]['label'] == 'REAL'):
+        if(video.keys() == name and video.values()[0]['label'] == 'FAKE'):
             realOrFake = True
     return realOrFake
-    
+
 
 def data_test():
     # Iterate through fake data directory and run through model
     directory = '/datab/nkanama/facebookDataset/trialRun/data'
-    output_directory = '/datab/nkanama/facebookDataset/trialRun/model_output'
+    # output directory for fake data
+    #output_directory = '/datab/nkanama/facebookDataset/trialRun/model_output'
+    # output directory for real data
+    output_directory = '/datac/nkanama/facebookDataset/output_model__real'
     videofile = ' '
     reference = ' '
     num = 0
@@ -53,7 +56,7 @@ def data_test():
     # iterating over videos
     for video in os.listdir(directory):
         # iterates through every 10th video
-        #skips directories and fake video
+        # skips directories and fake video
         if (os.path.isdir(video) or checkValid(video)):
             continue
         num = num + 1
@@ -65,15 +68,16 @@ def data_test():
         if(num_videos == 100):
             break
 
-        videofile = os.path.join(directory,video)
+        videofile = os.path.join(directory, video)
         cropped_string = video.find('.')
         reference = video[0:cropped_string]
         # create argument parses
-        opt_pipeline = get_args_pipeline(output_directory, videofile, reference)
+        opt_pipeline = get_args_pipeline(
+            output_directory, videofile, reference)
         # run through pipeline script to process videos
         pipelineMain(opt_pipeline)
-        #run through syncnet script to process videos
-        opt_syncnet = get_args_syncnet(output_directory, videofile,reference)
+        # run through syncnet script to process videos
+        opt_syncnet = get_args_syncnet(output_directory, videofile, reference)
         syncMain(opt_syncnet)
 
 
@@ -103,7 +107,7 @@ def get_args_pipeline(data_dir, videofile, reference):
     setattr(opt, 'tmp_dir', os.path.join(opt.data_dir, 'pytmp'))
     setattr(opt, 'work_dir', os.path.join(opt.data_dir, 'pywork'))
     setattr(opt, 'crop_dir', os.path.join(opt.data_dir, 'pycrop'))
-    setattr(opt,'frames_dir',os.path.join(opt.data_dir, 'pyframes'))
+    setattr(opt, 'frames_dir', os.path.join(opt.data_dir, 'pyframes'))
     return opt
 
 
