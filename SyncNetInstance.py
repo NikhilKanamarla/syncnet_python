@@ -175,7 +175,7 @@ class SyncNetInstance(torch.nn.Module):
         if os.path.exists(path_stats) == False:
             os.makedirs(path_stats)
         original_stdout = sys.stdout
-        with open(os.path.join(path_stats, "medianDistances.txt"), 'w') as f:
+        with open(os.path.join(path_stats, "stats.txt"), 'w') as f:
             sys.stdout = f
             print("median distance is ", torch.median(mdist))
             print("AV offset is ", offset)
