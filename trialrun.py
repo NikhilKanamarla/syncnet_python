@@ -27,8 +27,8 @@ import json
 
 def checkValid(name):
     json_file_1 = "/datab/nkanama/facebookDataset/dfdc_train_part_0/metadata.json"
-    json_file_2 = "/datab/nkanama/facebookDataset/dfdc_train_part_0/metadata.json"
-    json_file_3 = "/datab/nkanama/facebookDataset/dfdc_train_part_0/metadata.json"
+    json_file_2 = "/datab/nkanama/facebookDataset/dfdc_train_part_9/metadata.json"
+    json_file_3 = "/datab/nkanama/facebookDataset/dfdc_train_part_10/metadata.json"
     realOrFake = False
     json_check_1 = open(json_file_1)
     json_check_1X = json.load(json_check_1)
@@ -36,7 +36,13 @@ def checkValid(name):
     json_check_2X = json.load(json_check_2)
     json_check_3 = open(json_file_3)
     json_check_3X = json.load(json_check_3)
-    for video in json_check_1X, json_check_2X, json_check_3X:
+    for video in json_check_1X:
+        if(video.keys() == name and video.values()[0]['label'] == 'FAKE'):
+            realOrFake = True
+    for video in json_check_2X:
+        if(video.keys() == name and video.values()[0]['label'] == 'FAKE'):
+            realOrFake = True
+    for video in json_check_3X:
         if(video.keys() == name and video.values()[0]['label'] == 'FAKE'):
             realOrFake = True
     return realOrFake
