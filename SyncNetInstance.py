@@ -171,6 +171,7 @@ class SyncNetInstance(torch.nn.Module):
               (offset, minval, conf))
 
         dists_npy = numpy.array([dist.numpy() for dist in dists])
+        
         path_stats = os.path.join(opt.work_dir, "stats", opt.reference)
         if os.path.exists(path_stats) == False:
             os.makedirs(path_stats)
