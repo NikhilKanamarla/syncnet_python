@@ -10,7 +10,7 @@ import glob
 import sys
 import cv2
 import python_speech_features
-
+import matplotlib.pyplot as plt
 from scipy import signal
 from scipy.io import wavfile
 from SyncNetModel import *
@@ -58,21 +58,28 @@ class Stats:
         self.AV_offset.append(offset)
         self.min_distance.append(minval)
         self.confidence.append(conf)
-
         
     #aggregate class member lists and find averages and print them out 
-    def aggregateQuantStats(self):
+    def aggregateStats(self):
         print("average min distance ", sum(self.min_distance)/len(self.min_distance))
         print("average median distance ", sum(self.median_distance)/len(self.median_distance))
         print("average offset ", sum(self.AV_offset)//len(self.AV_offset))
         print("confidence ", sum(self.confidence)/len(self.confidence))
+
+        #visualization of offset over time
+        plt.plot(self.AV_offset)
+        plt.xlabel("number of videos")
+        plt.ylabel("audio-visual offset")
+        plt.title("offset over 10 sec videos")
+        stats_folder = '/datac/nkanama/facebookDataset/output_model_fake/pywork/features'
+        plt.savefig(os.path.join(stats_folder, "fakeVideoOffset.png"))
 
 
 if __name__ == '__main__':
     #run core of stats 
     intialTest = Stats()
     intialTest.processFeatures()
-    intialTest.aggregateQuantStats()
+    intialTest.aggregateStats()
 
 
 
