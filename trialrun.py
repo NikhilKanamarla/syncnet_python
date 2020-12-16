@@ -70,12 +70,12 @@ def data_test():
         if (os.path.isdir(video) or checkValid(video)):
             continue
         num = num + 1
-        if(num < 5):
+        if(num < 3):
             continue
         else:
             num_videos = num_videos+1
             num = 0
-        if(num_videos == 100):
+        if(num_videos == 19):
             break
 
         videofile = os.path.join(directory, video)
