@@ -61,18 +61,26 @@ class Stats:
         
     #aggregate class member lists and find averages and print them out 
     def aggregateStats(self):
+        #hard stats
         print("average min distance ", sum(self.min_distance)/len(self.min_distance))
         print("average median distance ", sum(self.median_distance)/len(self.median_distance))
         print("average offset ", sum(self.AV_offset)//len(self.AV_offset))
         print("confidence ", sum(self.confidence)/len(self.confidence))
 
-        #visualization of offset over time
+        #visualization of offset over videos
         plt.plot(self.AV_offset)
         plt.xlabel("number of videos")
         plt.ylabel("audio-visual offset")
         plt.title("offset over 10 sec videos")
-        stats_folder = '/datac/nkanama/facebookDataset/output_model_fake/pywork/features'
+        stats_folder = '/datac/nkanama/facebookDataset/output_model_fake/pywork/stats'
         plt.savefig(os.path.join(stats_folder, "fakeVideoOffset.png"))
+        #visualization of median distance over videos
+        plt.plot(self.median_distance)
+        plt.xlabel("number of videos")
+        plt.ylabel("median distance")
+        plt.title("median distance for 10 sec videos")
+        stats_folder = '/datac/nkanama/facebookDataset/output_model_fake/pywork/stats'
+        plt.savefig(os.path.join(stats_folder, "fakeVideoDistance.png"))
 
 
 if __name__ == '__main__':
