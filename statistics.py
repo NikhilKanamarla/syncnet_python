@@ -30,7 +30,7 @@ class Stats:
         for directory in os.listdir(features_folder):
             #cpu 
             audio_features = torch.load(os.path.join(features_folder,directory,'audioFeatures.pt'))
-            video_features = torch.load(os.path.join((features_folder, directory, 'videoFeatures.pt')))
+            video_features = torch.load(os.path.join(features_folder, directory, 'videoFeatures.pt'))
             self.quantStats(audio_features,video_features)
             print("calculation success")
 
