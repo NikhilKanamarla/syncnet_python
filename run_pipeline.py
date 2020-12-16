@@ -186,8 +186,8 @@ def crop_video(opt,track,cropfile):
 # ========== ========== ========== ==========
 
 def inference_video(opt):
-
-  DET = S3FD(device='cuda')
+  #change to cpu/cuda
+  DET = S3FD(device='cpu')
 
   flist = glob.glob(os.path.join(opt.frames_dir,opt.reference,'*.jpg'))
   flist.sort()

@@ -29,8 +29,29 @@ class Stats:
         print("placeholder")
     #calculate median, min distance and confidence and AV offset for audio/video features
     #add to storage in class member variables
-    def quantStats(self, audioFeatures, videoFeatures):
-        print("placeholder")
+    def quantStats(self, opt, audioFeatures, videoFeatures):
+        #gets pairwise distances between video and audio
+        dists = calc_pdist(videoFeatures, audioFeatures, vshift=opt.vshift)
+
+        mdist = torch.mean(torch.stack(dists, 1), 1)
+        #finds the min distance
+        minval, minidx = torch.min(mdist, 0)
+        #unclear
+        offset = opt.vshift-minidx
+        #confidence is median distance - min distance
+        conf = torch.median(mdist) - minval
+        fdist = numpy.stack([dist[minidx].numpy() for dist in dists])
+        # fdist   = numpy.pad(fdist, (3,3), 'constant', constant_values=15)
+        fconf = torch.median(mdist).numpy() - fdist
+        fconfm = signal.medfilt(fconf, kernel_size=9)
+        #median distance
+        medianDistance = torch.median(mdist)
+        self.median_distance.append(medianDistance)
+        self.AV_offset.append(offset)
+        self.min_distance.append(minval)
+        self.confidence.append(conf)
+
+        
     #aggregate class member lists and find averages and print them out 
     def aggregateQuantStats(self):
         print("placeholder")

@@ -70,7 +70,7 @@ def data_test():
         if (os.path.isdir(video) or checkValid(video)):
             continue
         num = num + 1
-        if(num < 10):
+        if(num < 5):
             continue
         else:
             num_videos = num_videos+1
