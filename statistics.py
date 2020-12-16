@@ -26,7 +26,7 @@ class Stats:
     #iterate through folder and load video/audio features
     #send to the quantative stats method for processing
     def processFeatures(self):
-        features_folder = '/datac/nkanama/facebookDataset/output_model_fake/pywork/features'
+        features_folder = '/datac/nkanama/facebookDataset/output_model__real/pywork/features'
         for directory in os.listdir(features_folder):
             #cpu 
             audio_features = torch.load(os.path.join(features_folder,directory,'audioFeatures.pt'))
