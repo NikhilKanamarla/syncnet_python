@@ -32,7 +32,6 @@ class Stats:
             audio_features = torch.load(os.path.join(features_folder,directory,'audioFeatures.pt'))
             video_features = torch.load(os.path.join(features_folder, directory, 'videoFeatures.pt'))
             self.quantStats(audio_features,video_features)
-            print("calculation success")
 
     #calculate median, min distance and confidence and AV offset for audio/video features
     #add to storage in class member variables
@@ -64,7 +63,7 @@ class Stats:
     def aggregateQuantStats(self):
         print("average min distance ", sum(self.min_distance)/len(self.min_distance))
         print("average median distance ", sum(self.median_distance)/len(self.median_distance))
-        print("average offset ", sum(self.AV_offset)/len(self.AV_offset))
+        print("average offset ", sum(self.AV_offset)//len(self.AV_offset))
         print("confidence ", sum(self.confidence)/len(self.confidence))
 
 
