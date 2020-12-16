@@ -26,18 +26,26 @@ class Stats:
     #iterate through folder and load video/audio features
     #send to the quantative stats method for processing
     def processFeatures(self):
-        print("placeholder")
+        features_folder = '/datac/nkanama/facebookDataset/output_model_fake/pywork/features'
+        for directory in os.listdir(features_folder):
+            #cpu 
+            audio_features = torch.load(os.path.join((features_folder,directory,'audioFeatures.pt')))
+            video_features = torch.load(os.path.join((features_folder, directory, 'videoFeatures.pt')))
+            self.quantStats(audio_features,video_features)
+            print("calculation success")
+
     #calculate median, min distance and confidence and AV offset for audio/video features
     #add to storage in class member variables
-    def quantStats(self, opt, audioFeatures, videoFeatures):
+    def quantStats(self, audioFeatures, videoFeatures):
         #gets pairwise distances between video and audio
-        dists = calc_pdist(videoFeatures, audioFeatures, vshift=opt.vshift)
+        vshift = 15
+        dists = calc_pdist(videoFeatures, audioFeatures, vshift=15)
 
         mdist = torch.mean(torch.stack(dists, 1), 1)
         #finds the min distance
         minval, minidx = torch.min(mdist, 0)
-        #unclear
-        offset = opt.vshift-minidx
+        #standard offset - min distance
+        offset = vshift-minidx
         #confidence is median distance - min distance
         conf = torch.median(mdist) - minval
         fdist = numpy.stack([dist[minidx].numpy() for dist in dists])
@@ -54,7 +62,10 @@ class Stats:
         
     #aggregate class member lists and find averages and print them out 
     def aggregateQuantStats(self):
-        print("placeholder")
+        print("average min distance ", sum(self.min_distance)/len(self.min_distance))
+        print("average median distance ", sum(self.median_distance)/len(self.median_distance))
+        print("average offset ", sum(self.AV_offset)/len(self.AV_offset))
+        print("confidence ", sum(self.confidence)/len(self.confidence))
 
 
 if __name__ == '__main__':
