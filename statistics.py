@@ -26,7 +26,7 @@ class Stats:
     #iterate through folder and load video/audio features
     #send to the quantative stats method for processing
     def processFeatures(self):
-        features_folder = '/datac/nkanama/facebookDataset/output_model__real/pywork/features'
+        features_folder = '/datac/nkanama/facebookDataset/output_model_fake/pywork/features'
         for directory in os.listdir(features_folder):
             #cpu 
             audio_features = torch.load(os.path.join(features_folder,directory,'audioFeatures.pt'))
@@ -37,14 +37,15 @@ class Stats:
     #add to storage in class member variables
     def quantStats(self, audioFeatures, videoFeatures):
         #gets pairwise distances between video and audio
-        vshift = 15
-        dists = calc_pdist(videoFeatures, audioFeatures, vshift=15)
+        vshift = 10
+        dists = calc_pdist(videoFeatures, audioFeatures, vshift=10)
 
         mdist = torch.mean(torch.stack(dists, 1), 1)
         #finds the min distance
         minval, minidx = torch.min(mdist, 0)
         #standard offset - min distance
         offset = vshift-minidx
+        #print("the offset is ", offset)
         #confidence is median distance - min distance
         conf = torch.median(mdist) - minval
         fdist = numpy.stack([dist[minidx].numpy() for dist in dists])
