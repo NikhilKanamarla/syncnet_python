@@ -38,13 +38,13 @@ def checkValid(name):
     json_check_3 = open(json_file_3)
     json_check_3X = json.load(json_check_3)
     for (key, values) in json_check_1X.items():
-        if(key == name and values['label'] == 'FAKE'):
+        if(key == name and values['label'] == 'REAL'):
             realOrFake = True
     for (key, values) in json_check_2X.items():
-        if(key == name and values['label'] == 'FAKE'):
+        if(key == name and values['label'] == 'REAL'):
             realOrFake = True
     for (key, values) in json_check_3X.items():
-        if(key == name and values['label'] == 'FAKE'):
+        if(key == name and values['label'] == 'REAL'):
             realOrFake = True
     json_check_1.close()
     json_check_2.close()
@@ -58,7 +58,7 @@ def data_test():
     # output directory for fake data
     #output_directory = '/datac/nkanama/facebookDataset/output_model_fake'
     # output directory for real data
-    output_directory = '/datac/nkanama/facebookDataset/output_model__real'
+    output_directory = '/datac/nkanama/facebookDataset/output_model_fake'
     videofile = ' '
     reference = ' '
     num = 0
@@ -70,12 +70,12 @@ def data_test():
         if (os.path.isdir(video) or checkValid(video)):
             continue
         num = num + 1
-        if(num < 3):
+        if(num < 7):
             continue
         else:
             num_videos = num_videos+1
             num = 0
-        if(num_videos == 17):
+        if(num_videos == 5):
             break
 
         videofile = os.path.join(directory, video)
