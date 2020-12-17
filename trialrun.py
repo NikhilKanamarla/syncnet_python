@@ -39,13 +39,13 @@ def checkValid(name):
     json_check_3 = open(json_file_3)
     json_check_3X = json.load(json_check_3)
     for (key, values) in json_check_1X.items():
-        if(key == name and values['label'] == 'FAKE'):
+        if(key == name and values['label'] == 'REAL'):
             realOrFake = True
     for (key, values) in json_check_2X.items():
-        if(key == name and values['label'] == 'FAKE'):
+        if(key == name and values['label'] == 'REAL'):
             realOrFake = True
     for (key, values) in json_check_3X.items():
-        if(key == name and values['label'] == 'FAKE'):
+        if(key == name and values['label'] == 'REAL'):
             realOrFake = True
     json_check_1.close()
     json_check_2.close()
@@ -71,11 +71,6 @@ def data_test():
         if (os.path.isdir(video) or checkValid(video)):
             continue
         num = num + 1
-        if(num < 5):
-            continue
-        else:
-            num_videos = num_videos+1
-            num = 0
         if(num_videos == 15):
             break
 
@@ -90,10 +85,11 @@ def data_test():
         # run through syncnet script to process videos
         opt_syncnet = get_args_syncnet(output_directory, videofile, reference)
         syncMain(opt_syncnet)
+        '''
         # run through visualize script to process videos
         opt_visual = get_visual_args(output_directory, videofile, reference)
         visualMain(opt_visual)
-
+        '''
 
 def get_args_pipeline(data_dir, videofile, reference):
     parser = argparse.ArgumentParser(description="FaceTracker")
@@ -149,9 +145,9 @@ def get_visual_args(data_dir, videofile, reference):
 	# ==================== PARSE ARGUMENT ====================
 
 	parser = argparse.ArgumentParser(description="SyncNet")
-	parser.add_argument('--data_dir', 	type=str, default='data/work', help='')
-	parser.add_argument('--videofile', 	type=str, default='', help='')
-	parser.add_argument('--reference', 	type=str, default='', help='')
+	parser.add_argument('--data_dir', 	type=str, default=data_dir, help='')
+	parser.add_argument('--videofile', 	type=str, default=videofile, help='')
+	parser.add_argument('--reference', 	type=str, default=reference, help='')
 	parser.add_argument('--frame_rate', type=int, default=25, help='Frame rate')
 	opt = parser.parse_args()
 
