@@ -23,6 +23,7 @@ from scipy import signal
 from detectors import S3FD
 from run_pipeline import main as pipelineMain
 from run_syncnet import main as syncMain
+from run_visualise import main as visualMain
 import json
 
 
@@ -56,9 +57,9 @@ def data_test():
     # Iterate through fake data directory and run through model
     directory = '/datab/nkanama/facebookDataset/trialRun/data'
     # output directory for fake data
-    #output_directory = '/datac/nkanama/facebookDataset/output_model_fake'
+    output_directory = '/datac/nkanama/facebookDataset/output_model_fake'
     # output directory for real data
-    output_directory = '/datac/nkanama/facebookDataset/output_model__real'
+    #output_directory = '/datac/nkanama/facebookDataset/output_model__real'
     videofile = ' '
     reference = ' '
     num = 0
@@ -70,12 +71,12 @@ def data_test():
         if (os.path.isdir(video) or checkValid(video)):
             continue
         num = num + 1
-        if(num < 3):
+        if(num < 5):
             continue
         else:
             num_videos = num_videos+1
             num = 0
-        if(num_videos == 17):
+        if(num_videos == 15):
             break
 
         videofile = os.path.join(directory, video)
@@ -89,6 +90,9 @@ def data_test():
         # run through syncnet script to process videos
         opt_syncnet = get_args_syncnet(output_directory, videofile, reference)
         syncMain(opt_syncnet)
+        # run through visualize script to process videos
+        opt_visual = get_visual_args(output_directory, videofile, reference)
+        visualMain(opt_visual)
 
 
 def get_args_pipeline(data_dir, videofile, reference):
@@ -141,5 +145,21 @@ def get_args_syncnet(data_dir, videofile, reference):
     return opt
 
 
+def get_visual_args(data_dir, videofile, reference):
+	# ==================== PARSE ARGUMENT ====================
+
+	parser = argparse.ArgumentParser(description="SyncNet")
+	parser.add_argument('--data_dir', 	type=str, default='data/work', help='')
+	parser.add_argument('--videofile', 	type=str, default='', help='')
+	parser.add_argument('--reference', 	type=str, default='', help='')
+	parser.add_argument('--frame_rate', type=int, default=25, help='Frame rate')
+	opt = parser.parse_args()
+
+	setattr(opt, 'avi_dir', os.path.join(opt.data_dir, 'pyavi'))
+	setattr(opt, 'tmp_dir', os.path.join(opt.data_dir, 'pytmp'))
+	setattr(opt, 'work_dir', os.path.join(opt.data_dir, 'pywork'))
+	setattr(opt, 'crop_dir', os.path.join(opt.data_dir, 'pycrop'))
+	setattr(opt, 'frames_dir', os.path.join(opt.data_dir, 'pyframes'))
+	return opt
 if __name__ == '__main__':
     data_test()
