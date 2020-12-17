@@ -18,18 +18,20 @@ from shutil import rmtree
 from SyncNetInstance import calc_pdist
 
 class Stats:
-    def __init__(self, median_distance = None, min_distance = None, confidence = None, AV_offset=None ):
+    def __init__(self, median_distance = None, min_distance = None, confidence = None, AV_offset=None, distance=None, confidence_frame = None):
         self.median_distance = []
         self.min_distance = []
         self.confidence = []
         self.AV_offset = []
+        self.distance = []
+        self.confidence_frame = []
     #iterate through folder and load video/audio features
     #send to the quantative stats method for processing
     def processFeatures(self):
         #use for real data 
-        features_folder = '/datac/nkanama/facebookDataset/output_model__real/pywork/features'
+        #features_folder = '/datac/nkanama/facebookDataset/output_model__real/pywork/features'
         #use for fake data
-        #features_folder = '/datac/nkanama/facebookDataset/output_model_fake/pywork/features'
+        features_folder = '/datac/nkanama/facebookDataset/output_model_fake/pywork/features'
         for directory in os.listdir(features_folder):
             #cpu 
             audio_features = torch.load(os.path.join(features_folder,directory,'audioFeatures.pt'))
@@ -41,10 +43,9 @@ class Stats:
     def quantStats(self, audioFeatures, videoFeatures):
         #gets pairwise distances between video and audio
         vshift = 10
+        #print(len(videoFeatures), " ", len(videoFeatures[0]))
         dists = calc_pdist(videoFeatures, audioFeatures, vshift=10)
-        #finds average for each column of distances
         mdist = torch.mean(torch.stack(dists, 1), 1)
-        #finds the min distance
         minval, minidx = torch.min(mdist, 0)
         #standard offset - index of min distance 
         offset = vshift-minidx
@@ -58,6 +59,8 @@ class Stats:
         dists_npy = numpy.array([dist.numpy() for dist in dists])
         #median distance
         medianDistance = torch.median(mdist)
+        self.distance.append(mdist)
+        self.confidence_frame.append(fconfm)
         self.median_distance.append(medianDistance)
         self.AV_offset.append(offset)
         self.min_distance.append(minval)
@@ -72,10 +75,9 @@ class Stats:
         print("confidence ", sum(self.confidence)/len(self.confidence))
         
         #use for real data
-        stats_folder = '/datac/nkanama/facebookDataset/output_model__real/pywork/stats'
+        #stats_folder = '/datac/nkanama/facebookDataset/output_model__real/pywork/stats'
         #use for fake data
-        #stats_folder = '/datac/nkanama/facebookDataset/output_model_fake/pywork/stats'
-        
+        stats_folder = '/datac/nkanama/facebookDataset/output_model_fake/pywork/stats'
         #visualization of offset over videos
         plt.plot(self.AV_offset)
         plt.xlabel("number of videos")
@@ -91,8 +93,19 @@ class Stats:
         plt.title("median distance for 10 sec videos")
         plt.show()
         plt.savefig(os.path.join(stats_folder, "VideoDistance.png"))
-
-
+        '''
+        #visualization of mean euclidean distance on y axis and time on x-axis 
+        plt.clf()
+        averaged_confidence = numpy.mean(numpy.stack(self.confidence_frame,1),1)
+        print(averaged_confidence)
+        plt.plot(averaged_confidence)
+        plt.xlabel("time in  intervals of frames")
+        plt.ylabel("Confidence in sync error")
+        plt.title("Confidence in sync error over time")
+        plt.show()
+        plt.savefig(os.path.join(stats_folder, "VideoConfidenceTime.png"))
+        plt.clf()
+        '''
 if __name__ == '__main__':
     #run core of stats 
     intialTest = Stats()
