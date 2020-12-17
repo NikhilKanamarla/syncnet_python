@@ -46,6 +46,7 @@ class Stats:
         #print(len(videoFeatures), " ", len(videoFeatures[0]))
         dists = calc_pdist(videoFeatures, audioFeatures, vshift=10)
         mdist = torch.mean(torch.stack(dists, 1), 1)
+        #finds the min distance for the video 
         minval, minidx = torch.min(mdist, 0)
         #standard offset - index of min distance 
         offset = vshift-minidx
