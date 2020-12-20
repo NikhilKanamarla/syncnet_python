@@ -71,9 +71,8 @@ def data_test():
         if (os.path.isdir(video) or checkValid(video)):
             continue
         num = num + 1
-        if(num_videos == 15):
+        if(num_videos == 50):
             break
-
         videofile = os.path.join(directory, video)
         cropped_string = video.find('.')
         reference = video[0:cropped_string]
@@ -85,11 +84,11 @@ def data_test():
         # run through syncnet script to process videos
         opt_syncnet = get_args_syncnet(output_directory, videofile, reference)
         syncMain(opt_syncnet)
-        '''
+        
         # run through visualize script to process videos
         opt_visual = get_visual_args(output_directory, videofile, reference)
         visualMain(opt_visual)
-        '''
+        
 
 def get_args_pipeline(data_dir, videofile, reference):
     parser = argparse.ArgumentParser(description="FaceTracker")
