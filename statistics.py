@@ -18,20 +18,19 @@ from shutil import rmtree
 from SyncNetInstance import calc_pdist
 
 class Stats:
-    def __init__(self, median_distance = None, min_distance = None, confidence = None, AV_offset=None, distance=None, confidence_frame = None):
+    def __init__(self, median_distance = None, min_distance = None, confidence = None, AV_offset=None, mean_distance=None):
         self.median_distance = []
         self.min_distance = []
         self.confidence = []
         self.AV_offset = []
-        self.distance = []
-        self.confidence_frame = []
+        self.mean_distance = []
     #iterate through folder and load video/audio features
     #send to the quantative stats method for processing
     def processFeatures(self):
         #use for real data 
-        #features_folder = '/datac/nkanama/facebookDataset/output_model__real/pywork/features'
+        features_folder = '/datac/nkanama/facebookDataset/output_model__real/pywork/features'
         #use for fake data
-        features_folder = '/datac/nkanama/facebookDataset/output_model_fake/pywork/features'
+        #features_folder = '/datac/nkanama/facebookDataset/output_model_fake/pywork/features'
         for directory in os.listdir(features_folder):
             #cpu 
             audio_features = torch.load(os.path.join(features_folder,directory,'audioFeatures.pt'))
@@ -60,25 +59,27 @@ class Stats:
         dists_npy = numpy.array([dist.numpy() for dist in dists])
         #median distance
         medianDistance = torch.median(mdist)
-        self.distance.append(mdist)
-        self.confidence_frame.append(fconfm)
+        #add for future stats 
         self.median_distance.append(medianDistance)
         self.AV_offset.append(offset)
         self.min_distance.append(minval)
         self.confidence.append(conf)
+        self.mean_distance.append(torch.mean(mdist))
         
     #aggregate class member lists and find averages and print them out 
     def aggregateStats(self):
         #hard stats
         print("average min distance ", sum(self.min_distance)/len(self.min_distance))
         print("average median distance ", sum(self.median_distance)/len(self.median_distance))
+        print("average mean distance ", sum(self.mean_distance)/len(self.mean_distance))
         print("average offset ", sum(self.AV_offset)//len(self.AV_offset))
         print("confidence ", sum(self.confidence)/len(self.confidence))
         
+        
         #use for real data
-        #stats_folder = '/datac/nkanama/facebookDataset/output_model__real/pywork/stats'
+        stats_folder = '/datac/nkanama/facebookDataset/output_model__real/pywork/stats'
         #use for fake data
-        stats_folder = '/datac/nkanama/facebookDataset/output_model_fake/pywork/stats'
+        #stats_folder = '/datac/nkanama/facebookDataset/output_model_fake/pywork/stats'
         #visualization of offset over videos
         plt.plot(self.AV_offset)
         plt.xlabel("number of videos")
@@ -94,19 +95,22 @@ class Stats:
         plt.title("median distance for 10 sec videos")
         plt.show()
         plt.savefig(os.path.join(stats_folder, "VideoDistance.png"))
-        '''
-        #visualization of mean euclidean distance on y axis and time on x-axis 
         plt.clf()
-        averaged_confidence = numpy.mean(numpy.stack(self.confidence_frame,1),1)
-        print(averaged_confidence)
-        plt.plot(averaged_confidence)
-        plt.xlabel("time in  intervals of frames")
-        plt.ylabel("Confidence in sync error")
-        plt.title("Confidence in sync error over time")
+        #visualization of histogram of median distance over videos
+        histogram_mean = []
+        for x in range(0,21):
+            histogram_mean.append(0)
+        for index, element in enumerate(self.mean_distance):
+            histogram_mean[int(round(float(self.mean_distance[index]),0))] = histogram_mean[int(round(float(self.mean_distance[index]),0))] + 1
+        plt.plot(histogram_mean)
+        plt.xlabel("mean distance values")
+        plt.ylabel("frequency")
+        plt.title("histogram of mean distance values")
         plt.show()
-        plt.savefig(os.path.join(stats_folder, "VideoConfidenceTime.png"))
+        plt.savefig(os.path.join(stats_folder, "HistogramMeanDistance.png"))
         plt.clf()
-        '''
+        
+
 if __name__ == '__main__':
     #run core of stats 
     intialTest = Stats()
