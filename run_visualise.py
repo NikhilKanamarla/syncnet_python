@@ -40,19 +40,19 @@ def main(opt):
 	# ==================== SMOOTH FACES ====================
 
 	faces = [[] for i in range(len(flist))]
-
+	#iterate through tracked faces
 	for tidx, track in enumerate(tracks):
-
+		#calculate mean/min distances 
 		mean_dists 	=  numpy.mean(numpy.stack(dists[tidx],1),1)
 		minidx 		= numpy.argmin(mean_dists,0)
 		minval 		= mean_dists[minidx] 
 		
 		fdist   	= numpy.stack([dist[minidx] for dist in dists[tidx]])
 		fdist   	= numpy.pad(fdist, (3,3), 'constant', constant_values=10)
-
+		#calculate confidence
 		fconf   = numpy.median(mean_dists) - fdist
 		fconfm  = signal.medfilt(fconf,kernel_size=9)
-
+		#for each face for each frame add confidence and other info
 		for fidx, frame in enumerate(track['track']['frame'].tolist()) :
 			faces[frame].append({'track': tidx, 'conf':fconfm[fidx], 's':track['proc_track']['s'][fidx], 'x':track['proc_track']['x'][fidx], 'y':track['proc_track']['y'][fidx]})
 
@@ -65,15 +65,16 @@ def main(opt):
 
 	fourcc = cv2.VideoWriter_fourcc(*'XVID')
 	vOut = cv2.VideoWriter(os.path.join(opt.avi_dir,opt.reference,'video_only.avi'), fourcc, opt.frame_rate, (fw,fh))
-
+	#iterate through files of videos
 	for fidx, fname in enumerate(flist):
 
 		image = cv2.imread(fname)
-
+		#add tracks to faces 
 		for face in faces[fidx]:
 
 			clr = max(min(face['conf']*25,255),0)
-
+			#visualize the confidence of sync error (red == real (low sync error), green = fake (high sync error))
+			# BGR (0, confidence*25, 255-confidence*25)
 			cv2.rectangle(image,(int(face['x']-face['s']),int(face['y']-face['s'])),(int(face['x']+face['s']),int(face['y']+face['s'])),(0,clr,255-clr),3)
 			cv2.putText(image,'Track %d, Conf %.3f'%(face['track'],face['conf']), (int(face['x']-face['s']),int(face['y']-face['s'])),cv2.FONT_HERSHEY_SIMPLEX,0.5,(255,255,255),2)
 
@@ -84,7 +85,7 @@ def main(opt):
 	vOut.release()
 
 	# ========== COMBINE AUDIO AND VIDEO FILES ==========
-
+	#output 
 	command = ("ffmpeg -y -i %s -i %s -c:v copy -c:a copy %s" % (os.path.join(opt.avi_dir,opt.reference,'video_only.avi'),os.path.join(opt.avi_dir,opt.reference,'audio.wav'),os.path.join(opt.avi_dir,opt.reference,'video_out.avi'))) #-async 1 
 	output = subprocess.call(command, shell=True, stdout=None)
 
