@@ -46,7 +46,7 @@ class SyncNetInstance(torch.nn.Module):
     def __init__(self, dropout=0, num_layers_in_fc_layers=1024):
         super(SyncNetInstance, self).__init__()
         #change to cpu/cuda
-        self.__S__ = S(num_layers_in_fc_layers=num_layers_in_fc_layers).cpu()
+        self.__S__ = S(num_layers_in_fc_layers=num_layers_in_fc_layers).cuda()
 
     def evaluate(self, opt, videofile):
 
@@ -126,14 +126,14 @@ class SyncNetInstance(torch.nn.Module):
                         for vframe in range(i, min(lastframe, i+opt.batch_size))]
             im_in = torch.cat(im_batch, 0)
             #change to cpu/cuda
-            im_out = self.__S__.forward_lip(im_in.cpu())
+            im_out = self.__S__.forward_lip(im_in.cuda())
             im_feat.append(im_out.data.cpu())
 
             cc_batch = [cct[:, :, :, vframe*4:vframe*4+20]
                         for vframe in range(i, min(lastframe, i+opt.batch_size))]
             cc_in = torch.cat(cc_batch, 0)
             #change to cpu/cuda
-            cc_out = self.__S__.forward_aud(cc_in.cpu())
+            cc_out = self.__S__.forward_aud(cc_in.cuda())
             cc_feat.append(cc_out.data.cpu())
 
         #save feature some how? It's a PyTorch Tensor
@@ -227,7 +227,7 @@ class SyncNetInstance(torch.nn.Module):
                         for vframe in range(i, min(lastframe, i+opt.batch_size))]
             im_in = torch.cat(im_batch, 0)
             #change to cpu/cuda if needed
-            im_out = self.__S__.forward_lipfeat(im_in.cpu())
+            im_out = self.__S__.forward_lipfeat(im_in.cuda())
             im_feat.append(im_out.data.cpu())
 
         im_feat = torch.cat(im_feat, 0)
