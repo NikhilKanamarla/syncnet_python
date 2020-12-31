@@ -25,37 +25,45 @@ from run_pipeline import main as pipelineMain
 from run_syncnet import main as syncMain
 from run_visualise import main as visualMain
 import json
+import pdb
 
 
 def checkValid(name):
     json_file_1 = "/datab/nkanama/facebookDataset/dfdc_train_part_0/metadata.json"
-    json_file_2 = "/datab/nkanama/facebookDataset/dfdc_train_part_9/metadata.json"
-    json_file_3 = "/datab/nkanama/facebookDataset/dfdc_train_part_10/metadata.json"
+    #json_file_2 = "/datab/nkanama/facebookDataset/dfdc_train_part_9/metadata.json"
+    #json_file_3 = "/datab/nkanama/facebookDataset/dfdc_train_part_10/metadata.json"
     realOrFake = False
     json_check_1 = open(json_file_1)
     json_check_1X = json.load(json_check_1)
+    '''
     json_check_2 = open(json_file_2)
     json_check_2X = json.load(json_check_2)
     json_check_3 = open(json_file_3)
     json_check_3X = json.load(json_check_3)
+    '''
     for (key, values) in json_check_1X.items():
         if(key == name and values['label'] == 'REAL'):
             realOrFake = True
+    '''
     for (key, values) in json_check_2X.items():
         if(key == name and values['label'] == 'REAL'):
             realOrFake = True
     for (key, values) in json_check_3X.items():
         if(key == name and values['label'] == 'REAL'):
             realOrFake = True
+    '''
     json_check_1.close()
+    '''
     json_check_2.close()
     json_check_3.close()
+    '''
     return realOrFake
 
 
 def data_test():
     # Iterate through fake data directory and run through model
-    directory = '/datab/nkanama/facebookDataset/trialRun/data'
+    #directory = '/datab/nkanama/facebookDataset/trialRun/data'
+    directory = '/datab/nkanama/facebookDataset/dfdc_train_part_0'
     # output directory for fake data
     output_directory = '/datac/nkanama/facebookDataset/output_model_fake'
     # output directory for real data
@@ -66,7 +74,6 @@ def data_test():
     num_videos = 0
     # iterating over videos
     for video in os.listdir(directory):
-        # iterates through every 10th video
         # skips directories and fake video
         if (os.path.isdir(video) or checkValid(video)):
             continue
@@ -76,15 +83,17 @@ def data_test():
         videofile = os.path.join(directory, video)
         cropped_string = video.find('.')
         reference = video[0:cropped_string]
+        print(videofile)
+        print(output_directory)
+        print(reference)
         # create argument parses
-        opt_pipeline = get_args_pipeline(
-            output_directory, videofile, reference)
+        opt_pipeline = get_args_pipeline(output_directory, videofile, reference)
         # run through pipeline script to process videos
         pipelineMain(opt_pipeline)
         # run through syncnet script to process videos
         opt_syncnet = get_args_syncnet(output_directory, videofile, reference)
         syncMain(opt_syncnet)
-        
+        #pdb.set_trace()
         # run through visualize script to process videos
         opt_visual = get_visual_args(output_directory, videofile, reference)
         visualMain(opt_visual)
