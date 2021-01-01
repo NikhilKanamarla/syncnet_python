@@ -41,7 +41,7 @@ def main(opt):
 
 	faces = [[] for i in range(len(flist))]
 	#iterate through tracked faces
-	fconf = 0
+
 	for tidx, track in enumerate(tracks):
 		#calculate mean/min distances 
 		mean_dists 	=  numpy.mean(numpy.stack(dists[tidx],1),1)
@@ -78,7 +78,6 @@ def main(opt):
 			# BGR (0, confidence*25, 255-confidence*25)
 			cv2.rectangle(image,(int(face['x']-face['s']),int(face['y']-face['s'])),(int(face['x']+face['s']),int(face['y']+face['s'])),(0,clr,255-clr),3)
 			cv2.putText(image,'Track %d, Conf %.3f'%(face['track'],face['conf']), (int(face['x']-face['s']),int(face['y']-face['s'])),cv2.FONT_HERSHEY_SIMPLEX,0.5,(255,255,255),2)
-			cv2.putText(image, ('overall confidence: ', fconf), (0, 0), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 		vOut.write(image)
 
 		print('Frame %d'%fidx)
